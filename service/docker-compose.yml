@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  smbh-service:
+    build: ./src
+    volumes: 
+      - ./src:/usr/src/app
+    ports: 
+      - 5050:8000
+
+  website:
+    image: php:apache
+    volumes:
+    - ./src:/var/www/html
+    ports:
+      - 5051:80
