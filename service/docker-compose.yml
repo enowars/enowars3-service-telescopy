@@ -6,11 +6,11 @@ services:
     volumes: 
       - ./src:/usr/src/app
     ports: 
-      - 5050:8000
+      - 8000:8000
 
   website:
     image: php:apache
     volumes:
-    - ./src:/var/www/html
+    - ./src/front/www:/var/www/html
     ports:
       - 5051:80

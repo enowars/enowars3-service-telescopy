@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.6.8-stretch
 
 WORKDIR /usr/src/app
 
@@ -7,4 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "./main.py" ]
+ENV FLASK_DEVELOPMENT development
+ENV FLASK_APP main.py
+
+CMD ["flask", "run" , "-h" , "0.0.0.0" , "-p" , "8000"]
