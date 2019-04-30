@@ -9,13 +9,17 @@ class blackhole(db.Model):
     name = db.Column(db.String(100))
     description = db.Column(db.String(50))  
     age = db.Column(db.String(200))
-    location = db.Column(db.String(10))   
+    location = db.Column(db.String(200))
+    angle = db.Column(db.String(200))
 
-    def __init__(self, name, description, age):
+
+    def __init__(self, name, description, age, angle):
         self.name = name
         self.bhId = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
         self.description = description
         self.age = age
+        self.angle = angle
+        self.location = "location"
 
     def to_dict(self):
         return{

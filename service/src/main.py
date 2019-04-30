@@ -35,17 +35,21 @@ global smbh
 
 @app.route('/addBlackHole')
 def addBlackHole():
+    db.create_all()
+
     bh = blackhole(request.args.get('name'),
     request.args.get('description'),
-    request.args.get('age'))
-    calculateLocation(bh, request.args.get('angle'))
+    request.args.get('age'),
+    request.args.get('angle'))
     db.session.add(bh)
     db.session.commit()
     return "black hole added"
 
 @app.route('/getBlackHole=<bh>')
 def getBlackHole(bh):
-    return jsonify(blackhole.query.filter(blackhole.age == bh).first().to_dict())
+    print(blackhole.query.filter(blackhole.angle == bh).first())
+    print(blackhole.query.filter(blackhole.angle == bh).first().to_dict())
+    return jsonify(blackhole.query.filter(blackhole.angle == bh).first().to_dict())
 
 
 
@@ -55,13 +59,8 @@ def calculateLocation(bh, angle):
     bh.location = k.encrypt(str.encode(angle))
 
 if __name__ == '__main__':
-    print("hi")
+    #ToDo main doesn't get called by flask app; tables don't get created
     db.create_all()
-
-    # bh = blackhole("jdfs","flksjdf", "sldkfjd","Sdfsdf")
-    # db.session.add(bh)
-    # db.session.commit()
-
     app.run(host='0.0.0.0',port=8000, debug=True)
     
 
