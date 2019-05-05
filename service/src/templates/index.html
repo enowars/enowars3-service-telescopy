@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="split left">
+        <div class="centered">
+            <p>add an observed planet</p>
+           <input id="name" type="text"  placeholder="Name"> 
+            <br>
+            <input id="declination" type="text"  placeholder="Declination">
+            <br>
+           <input id="rightAscension" type="text"  placeholder="Right Ascension">
+           <br>
+           <input id="flag" type="text"  placeholder="Flag" disabled>
+            <br></br>
+            <button id=" submit2" onClick="addPlanet(this.id)">submit</button>
+        </div>  
+
+    </div>
+    </div>
+    <div class="split right">
+        <div class="centered">
+            <p>detect a planet with a telescope:</p>
+            <input id="ticket" type="text" placeholder="ticket"><br>
+            <br>
+            <input id="declination2" type="text" placeholder="declination"><br>
+            <br>
+            <input id="rightAscension2" type="text" placeholder="Right Ascension"><br>
+
+            <button id=" submit1" onClick="getPlanet(this.id)">submit</button>
+            <p id="result"></p>
+
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+        function reply_click(clicked_id) {
+            makeAjaxRequest();
+        }
+        function addPlanet(clicked_id){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    alert(this.responseText)
+                }
+            };
+            xhttp.open("GET", "http://localhost:8000/addPlanet" + 
+            "?name=" + document.getElementById("name").value +
+            "&declination=" + document.getElementById("declination").value +
+            "&rightAscension=" + document.getElementById("rightAscension").value +
+            "&flag=none"
+            ,true)
+            xhttp.send();   
+        }
+
+        function getPlanet(clicked_id){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    alert(this.responseText)
+                }
+            };
+            xhttp.open("GET", "http://localhost:8000/getPlanet?declination=" + document.getElementById("declination2").value
+            +"&rightAscension=" +  document.getElementById("rightAscension2").value
+            +"&ticket=" +  document.getElementById("ticket").value
+            , true)
+            xhttp.send();   
+        }
+        function makeAjaxRequest() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("result").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "http://localhost:8000/directTelscopeTo/" + document.getElementById("angleInput").value, true);
+            xhttp.send();
+        }
+    </script>
+
+</body>
+
+</html>
