@@ -5,17 +5,17 @@ from app import db
 
 class Planet(db.Model):
     id = db.Column('dateaseId', db.Integer, primary_key = True)
-    planetId = db.Column(db.String(32))
+    planetId = db.Column(db.String(100))
     name = db.Column(db.String(100))
-    declination = db.Column(db.String(50))  
-    rightAscension = db.Column(db.String(200))
-    location = db.Column(db.String(200))
-    flag = db.Column(db.String(200))
+    declination = db.Column(db.String(100))  
+    rightAscension = db.Column(db.String(100))
+    location = db.Column(db.String(100))
+    flag = db.Column(db.String(100))
 
 
     def __init__(self, name, declination, rightAscension, flag):
         self.name = name
-        self.planetId = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
+        # self.planetId = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
         self.declination = declination
         self.rightAscension = rightAscension
         self.flag = flag
@@ -28,3 +28,5 @@ class Planet(db.Model):
             "rightAscension" : self.rightAscension,
             "flag" : self.flag
         }
+
+    

@@ -1,17 +1,22 @@
 #include <stdlib.h>
 #include <stdio.h>
- 
+#include <limits.h>
 int main(int argc,char* argv[]) 
 {
+   printf("start checking!");
 	int n = 0;
 	if(argc == 2){
 		n = atoi(argv[1]);
+      n = -n;
 		
 	}else{
 		return 0;
+      printf("nope");
 	}
-	
-	if (n < 999 || n > 9999){
+	printf("%d",INT_MAX );
+	if (n > INT_MAX || n < 99999999){
+            printf("nope out of range");
+
 		return 0;
 	}
    int c = 2;
@@ -20,13 +25,17 @@ int main(int argc,char* argv[])
    {
       if ( n%c == 0 )
       {
-         printf("%d isn't prime.\n", n);
+
+         printf("nope! can be devided");
      break;
       }
    }
-   if ( c == n )
+   if ( c == n ){
+            printf("yup");
+
       return 1;
-  
-       
+   }
+                printf("nope!");
+
    return 0;
 }
