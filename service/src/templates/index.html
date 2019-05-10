@@ -1,139 +1,57 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Telescopy</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
 <body>
-    <div class="centered">
-            <div>
-                <p>add an observed planet</p>
-            <input id="name" type="text"  placeholder="Name"> 
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mt-4">
+            <div class="col-md-7">
+                <h5>Add an observed planet!</h5>
+                <input id="name" type="text" placeholder="Name" class="form-control">
+                <input id="declination" type="text" placeholder="Declination" class="form-control">
+                <input id="rightAscension" type="text" placeholder="Right Ascension" class="form-control">
+                <input id="flag" type="text" placeholder="Flag" disabled class="form-control">
                 <br>
-                <input id="declination" type="text"  placeholder="Declination">
-                <br>
-            <input id="rightAscension" type="text"  placeholder="Right Ascension">
-            <br>
-            <input id="flag" type="text"  placeholder="Flag" disabled>
-                <br></br>
-                <button id=" submit2" onClick="addPlanet(this.id)">submit</button>
-            </div>  
-
-            <div>
-                <p>detect a planet with a telescope:</p>
-                <input id="ticket" type="text" placeholder="ticket"><br>
-                <br>
-                <input id="declination2" type="text" placeholder="declination"><br>
-                
-                <input id="rightAscension2" type="text" placeholder="Right Ascension"><br>
-                <p> or </p>
-                <input id="planetId" type="text" placeholder="id"><br>
-                
-                <button id=" submit1" onClick="getPlanet(this.id)">submit</button>
-                <p id="result"></p>
-
+                <button class="btn btn-secondary" id=" submit2" onClick="addPlanet(this.id)">Add Planet</button>
             </div>
-            <div>
-                    <button id="getAllBtn" onClick="getAll(this.id)">get all planets</button>
-                    <p id="allPlanets"></p>
-            
-                </div>
+            <div class="mt-3 col-md-7">
+                <h5>Detect a planet with the Telescope!</h5>
+                <input id="ticket" type="text" placeholder="Ticket" class="form-control">
+                <p> and </p>
+                <input id="declination2" type="text" placeholder="Declination" class="form-control">
+                <input id="rightAscension2" type="text" placeholder="Right Ascension" class="form-control">
+                <p> or </p>
+                <input id="planetId" type="text" placeholder="id" class="form-control">
+                <br>
+                <button class="btn btn-secondary" id=" submit1" onClick="getPlanet(this.id)">Detect</button>
+                <p id="result"></p>
+            </div>
+        </div>
+        <div class="col-md-6 mt-4">
+            <div class="list-group">
+                {% for planet in planets %}
+                    <a href="/planet_details?name={{ planet.name }}" class="list-group-item list-group-item-action">Name: {{ planet.name }}</a>
+                {% endfor %}
+            </div>
+            <a class="btn btn-secondary mt-3" href="/" role="button">Update Planet List</a>
+        </div>
     </div>
-
-
-
-    <script type="text/javascript">
-        function reply_click(clicked_id) {
-            makeAjaxRequest();
-        }
-        function getAll(clicked_id){
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("allPlanets").innerHTML = this.responseText;
-                    // alert(this.responseText)
-                }
-            };
-            xhttp.open("GET", "../getAll" ,true)
-            xhttp.send();  
-        }
-        function addPlanet(clicked_id){
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    alert(this.responseText)
-                }
-            };
-            xhttp.open("GET", "../addPlanet" + 
-            "?name=" + document.getElementById("name").value +
-            "&declination=" + document.getElementById("declination").value +
-            "&rightAscension=" + document.getElementById("rightAscension").value +
-            "&flag=none"
-            ,true)
-            xhttp.send();   
-        }
-
-        function getPlanet(clicked_id){
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    alert(this.responseText)
-                }
-            };
-            xhttp.open("GET", "../getPlanet?declination=" + document.getElementById("declination2").value
-            +"&rightAscension=" +  document.getElementById("rightAscension2").value
-            +"&ticket=" +  document.getElementById("ticket").value
-            +"&id=" +  document.getElementById("planetId").value
-            , true)
-            xhttp.send();   
-        }
-        function makeAjaxRequest() {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("result").innerHTML = this.responseText;
-                }
-            };
-            xhttp.open("GET", "../directTelscopeTo/" + document.getElementById("angleInput").value, true);
-            xhttp.send();
-        }
-    </script>
-    <style>
-    /* Split the screen in half */
-.split {
-    height: 100%;
-    width: 50%;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    overflow-x: hidden;
-    padding-top: 20px;
-  }
-  
-  /* Control the left side */
-  .left {
-    left: 0;
-    background-color: rgb(177, 157, 157);
-  }
-  
-  /* Control the right side */
-  .right {
-    right: 0;
-    background-color: gray;
-  }
-  
-  /* If you want the content centered horizontally and vertically */
-  .centered {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-  }
-  
-  /* Style the image inside the centered container, if needed */
-  .centered img {
-    width: 150px;
-    border-radius: 50%;
-  }
-    </style>
+</div>
+<script src="/static/js/script.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 </body>
-
 </html>
