@@ -21,10 +21,6 @@ def index():
     return render_template("index.html", planets=planets)
 
 
-def check_ticket_validity(ticket):
-    pass
-
-
 @routes.route('/getAll')
 def get_all():
     planets = Planet.query.all()
@@ -44,55 +40,41 @@ def get_planet():
     if t is None or not represent_int(t) or (idd is None and (dec is None or ra is None)):
         return "can't do that!"
 
-    s = planet.call("ticketCheck " + t, True)
+    s = check_ticket_validity(t)
     if s != 1:
-        return "can't do that!"
+        return "Invalid ticket! Try again :)"
 
     if idd is not None:
         ra = Planet.query.filter(Planet.planetId == idd).first()
         if ra is not None:
             return jsonify(Planet.query.filter(Planet.planetId == idd).first().to_dict())
         else:
-            return "nothing found!"
+            return "Planet not found!"
 
     re = Planet.query.filter(Planet.declination == dec).filter(Planet.rightAscension == ra).first()
     if re is not None:
         return jsonify(ra.to_dict())
     else:
-        return "nothing found"
-
-
-def iding(i):
-    e = i.name.encode('utf-8')
-    h = hashlib.md5(e)
-    i.planetId = h.hexdigest()
+        return "Planet not found"
 
 
 @routes.route('/addPlanet')
 def add_planet():
-    planet1 = Planet(request.args.get('name'),
-                     request.args.get('declination'),
-                     request.args.get('rightAscension'),
-                     request.args.get('flag')
-                     )
-    iding(planet1)
-    db.session.add(planet1)
+    name = request.args.get('name')
+    dec = request.args.get('declination')
+    ri = request.args.get('rightAscension')
+
+    if name is None or name == "" or dec is None or dec == "" or ri is None or ri == "":
+        return "Please provide all planet information!"
+
+    if Planet.query.filter_by(name=name).first():
+        return "A planet with that name already exists!"
+
+    p = Planet(name, dec, ri)
+    iding(p)
+    db.session.add(p)
     db.session.commit()
     return "Your Planet was created!"
-
-
-def calculate_location(bh, angle):
-    data = base64.b64encode(str.encode(bh.bhId))
-    k = f.Fernet(data)
-    bh.location = k.encrypt(str.encode(angle))
-
-
-def represent_int(s):
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
 
 
 @routes.route('/planet_details')
@@ -169,3 +151,31 @@ def get_planet_details():
 </body>
 </html>''' % name
     return render_template_string(template, planet=planeta)
+
+
+def iding(i):
+    e = i.name.encode('utf-8')
+    d = i.declination.encode('utf-8')
+    r = i.rightAscension.encode('utf-8')
+    h = hashlib.md5(e+d+r)
+    i.planetId = h.hexdigest()
+
+
+def check_ticket_validity(ticket):
+    return planet.call("ticketCheck " + ticket, True)
+
+
+def calculate_location(bh, angle):
+    data = base64.b64encode(str.encode(bh.bhId))
+    k = f.Fernet(data)
+    bh.location = k.encrypt(str.encode(angle))
+
+
+def represent_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+

@@ -10,7 +10,7 @@ class Planet(db.Model):
     location = db.Column(db.String(100))
     flag = db.Column(db.String(100))
 
-    def __init__(self, name, declination, right_ascension, flag):
+    def __init__(self, name, declination, right_ascension, flag=""):
         self.name = name
         # self.planetId = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
         self.declination = declination
