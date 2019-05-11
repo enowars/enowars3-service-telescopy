@@ -11,9 +11,6 @@ routes = Blueprint("routes", __name__)
 
 @routes.route('/')
 def index():
-    # TODO: save stuff in the session for vulnerabilities
-    # session['flag'] = "SUPER SECRET FLAG HERE"
-
     planets = Planet.query.all()
     if request.method == 'POST':
         planets = Planet.query.all()
@@ -83,6 +80,9 @@ def get_planet_details():
     planeta = None
     if name:
         planets = Planet.query.all()
+        # Session vulnerability here.
+        # TODO check if too difficult o too easy.
+        session['planets'] = planets
         for p in planets:
             if p.name in name:
                 planeta = p.to_dict()
