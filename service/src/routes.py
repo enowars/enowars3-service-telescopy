@@ -3,13 +3,28 @@ import cryptography.fernet as f
 import subprocess as planet
 import base64
 from planet import Planet
-from flask import request, jsonify, render_template, Blueprint, session, render_template_string
+from user import User
+from flask import request, jsonify, render_template, Blueprint, session, render_template_string, redirect, url_for
 import hashlib
-
+from functools import wraps
+from passlib.hash import sha256_crypt
 routes = Blueprint("routes", __name__)
 
 
+# Check login state
+def is_logged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('routes.login'))
+
+    return wrap
+
+
 @routes.route('/')
+@is_logged_in
 def index():
     planets = Planet.query.all()
     if request.method == 'POST':
@@ -19,6 +34,7 @@ def index():
 
 
 @routes.route('/getAll')
+@is_logged_in
 def get_all():
     planets = Planet.query.all()
     result = {}
@@ -28,6 +44,7 @@ def get_all():
 
 
 @routes.route('/getPlanet')
+@is_logged_in
 def get_planet():
     dec = request.args.get('declination')
     ra = request.args.get('rightAscension')
@@ -38,7 +55,7 @@ def get_planet():
         return "can't do that!"
 
     s = check_ticket_validity(t)
-    if s != 1:
+    if s != 2:
         return "Invalid ticket! Try again :)"
 
     if idd is not None:
@@ -56,6 +73,7 @@ def get_planet():
 
 
 @routes.route('/addPlanet')
+@is_logged_in
 def add_planet():
     name = request.args.get('name')
     dec = request.args.get('declination')
@@ -75,6 +93,7 @@ def add_planet():
 
 
 @routes.route('/planet_details')
+@is_logged_in
 def get_planet_details():
     name = request.args.get('name')
     planeta = None
@@ -82,7 +101,7 @@ def get_planet_details():
         planets = Planet.query.all()
         # Session vulnerability here.
         # TODO check if too difficult o too easy.
-        session['planets'] = planets
+        # session['planets'] = planets
         for p in planets:
             if p.name in name:
                 planeta = p.to_dict()
@@ -153,16 +172,76 @@ def get_planet_details():
     return render_template_string(template, planet=planeta)
 
 
+@routes.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # Get Form Fields
+        username = request.form['username']
+        password_candidate = request.form['password']
+        user = User.query.filter_by(username=username).first()
+
+        if not user:
+            return "User not found"
+
+        if user.password is not None:
+            # Get stored hash
+            password = user.password
+
+            # Compare Passwords
+            if sha256_crypt.verify(password_candidate, password):
+                # Passed
+                session.permanent = True
+
+                session['logged_in'] = True
+                session['user'] = user.username
+
+                return redirect(url_for('routes.index'))
+            else:
+                return "Incorrect password"
+        else:
+            return "User not found"
+
+    return render_template('login.html')
+
+
+@routes.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if username is None or username == "" or password is None or password == "" or len(password) > 15 or len(username) > 15:
+            return "Invalid username or password"
+
+        password = sha256_crypt.encrypt(request.form['password'])
+
+        new_user = User(username, password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect(url_for('routes.login'))
+
+    return render_template('register.html')
+
+
+# Logout
+@routes.route('/logout')
+@is_logged_in
+def logout():
+    session.clear()
+    return redirect(url_for('routes.login'))
+
+
 def iding(i):
     e = i.name.encode('utf-8')
     d = i.declination.encode('utf-8')
     r = i.rightAscension.encode('utf-8')
-    h = hashlib.md5(e+d+r)
+    h = hashlib.md5(e + d + r)
     i.planetId = h.hexdigest()
 
 
 def check_ticket_validity(ticket):
-    return planet.call("ticketCheck " + ticket, True)
+    return planet.call("./ticketChecker " + ticket, shell=True)
 
 
 def calculate_location(bh, angle):
@@ -177,5 +256,3 @@ def represent_int(s):
         return True
     except ValueError:
         return False
-
-
