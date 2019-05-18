@@ -1,12 +1,19 @@
 version: '2.3'
 services:
-  wasp-backend:
+  telescopy-backend:
     build: .
-  wasp-frontend:
+  telescopy-frontend:
     image: nginx:1.13-alpine
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
-      - wasp-backend
+      - telescopy-backend
     ports:
       - 5001:80
+  telescopy-service:
+    build: ../service/src
+    volumes:
+      - ../service/src:/usr/src/app
+    ports:
+      - "8000:8000"
+

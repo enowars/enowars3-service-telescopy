@@ -3,7 +3,7 @@ FROM python:3
 WORKDIR /usr/src/app
 
 COPY . ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 CMD ["add-apt-repository", "ppa:hvr/ghc"]
 CMD ["apt", "update"]
