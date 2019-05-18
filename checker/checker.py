@@ -10,44 +10,11 @@ session = requests.Session()
 class TelescopyChecker(BaseChecker):
 
     port = 8000  # default port to send requests to.
-
+    USERNAME = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
+    PASSWORD = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
 
     def putflag(self):
-        tag = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-        
-    
-        self.debug('registering')
-
-        data = {'username' : 'hello5', 'password': 'world'}
-        requests.post("http://localhost/register", data)
-
-        self.http_post('/register' ,data)
-
-
-        # tag = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-        # self.team_db[self.flag] = tag
-
-        # self.debug("Putting Flag...")
-        # # / because why not
-        # self.http_get("/")
-        # if self.flag_idx % 2 == 0:
-        #     attack = {
-        #         "date": self.flag,
-        #         "location": "Berlin",
-        #         "description": "tasty bee hive! #{}".format(tag),
-        #         "password": self.flag
-        #     }
-        # else:
-        #     attack = {
-        #         "date": "whenever",
-        #         "location": self.flag,
-        #         "description": "tasty bee hive! #{}".format(tag),
-        #         "password": self.flag
-        #     }
-
-        # # /AddAttack
-        # self.http_post("/api/AddAttack", data=attack)
-        # self.debug("Flag {} up with tag: {}.".format(self.flag, tag))
+        self.register(self.USERNAME, self.PASSWORD)
 
     def getflag(self):
         pass
@@ -96,6 +63,11 @@ class TelescopyChecker(BaseChecker):
 
     def havoc(self):
         pass
+
+    def register(self, username, password):
+        print("Start registration  U: " + username + "  P: " + password, flush=True)
+        data = {'username': username, 'password': password}
+        self.http_post('/register', data)
 
 
 app = TelescopyChecker.service
