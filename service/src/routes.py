@@ -8,6 +8,8 @@ from flask import request, jsonify, render_template, Blueprint, session, render_
 import hashlib
 from functools import wraps
 from passlib.hash import sha256_crypt
+import json
+
 routes = Blueprint("routes", __name__)
 
 
@@ -27,6 +29,10 @@ def is_logged_in(f):
 @is_logged_in
 def index():
     planets = Planet.query.all()
+    # planets = [p.to_dict() for p in planets]
+    # planets = json.dumps(planets)
+    # session['planets'] = planets
+
     if request.method == 'POST':
         planets = Planet.query.all()
         return render_template('index.html', planets=planets)
@@ -207,13 +213,23 @@ def login():
 @routes.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        try:
+            username = request.form['username']
+            password = request.form['password']
+        except KeyError:
+            username = request.args.get("username")
+            password = request.args.get("password")
 
-        if username is None or username == "" or password is None or password == "" or len(password) > 15 or len(username) > 15:
+        if username is None or username == "" or password is None or password == "" or len(password) > 15 or len(
+                username) > 15:
             return "Invalid username or password"
 
-        password = sha256_crypt.encrypt(request.form['password'])
+        user = User.query.filter_by(username=username).first()
+
+        if user:
+            return "Username already taken!"
+
+        password = sha256_crypt.encrypt(password)
 
         new_user = User(username, password)
         db.session.add(new_user)
