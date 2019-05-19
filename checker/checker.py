@@ -2,26 +2,35 @@ import requests
 import json
 import random
 import string
+import json
+from faker import Faker
 from enochecker import BaseChecker, BrokenServiceException, run
 
 session = requests.Session()
+fake = Faker()
 
 
 class TelescopyChecker(BaseChecker):
-
     port = 8000  # default port to send requests to.
     USERNAME = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
     PASSWORD = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
+    PLANET_NAME = fake.name()
+    global data
 
     def putflag(self):
-        self.register(self.USERNAME, self.PASSWORD)
 
+        self.register(self.USERNAME, self.PASSWORD)
+        self.login(self.USERNAME, self.PASSWORD)
+        self.add_planet()
     def getflag(self):
-        pass
-        # self.http_get("/")
+        print(self.USERNAME, flush=True)
+        self.http_get("/")
+        self.get_planet()
+        # TODO does get all planets work?
+
 
         # try:
-        #     tag = self.team_db[self.flag]
+        # tag = self.team_db[self.flag]
         # except KeyError as ex:
         #     raise BrokenServiceException("Inconsistent Database: Couldn't get tag for team/flag ({})".format(self.flag))
 
@@ -68,6 +77,46 @@ class TelescopyChecker(BaseChecker):
         print("Start registration  U: " + username + "  P: " + password, flush=True)
         data = {'username': username, 'password': password}
         self.http_post('/register', data)
+
+    def login(self, username, password):
+        print("loging in", flush=True)
+
+        data = {'username': username, 'password': password}
+        print("finished loging in", flush=True)
+
+        resp = self.http_post('/login', data)
+        cookie = resp.cookies["session"]
+        print("cookie " + cookie, flush=True)
+
+        # TODO login success?
+
+    def add_planet(self):
+        data = {'name': fake.name(),
+                'declination': '10.1',
+                'rightAscension': '10.2',
+                'flag': self.flag}
+        resp = self.http_post('/addPlanet', data)
+        resp_dict = json.loads(resp.text)
+
+        print("planet added with id: " + resp_dict['planetId'], flush=True)
+
+        #todo where we store the id??
+
+
+
+    def get_planet(self):
+        #todo get the id
+
+        data = {'ticket': '100000000901',
+                'planetId' : '???'
+                }
+        resp = self.http_get('/getPlanet', data)
+        resp_dict = json.loads(resp.text)
+        self.planet_id = resp_dict['planetId']
+        print("planet retrieved with id: " + resp_dict['planetId'], flush=True)
+
+        if resp_dict['flag'] == self.flag :
+            print("the flag is still there :)", flush=True)
 
 
 app = TelescopyChecker.service
