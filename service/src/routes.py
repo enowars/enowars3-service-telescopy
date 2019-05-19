@@ -56,7 +56,7 @@ def get_planet():
     ra = request.args.get('rightAscension')
     idd = request.args.get('id')
     t = request.args.get('ticket')
-
+#todo ticket expires after used
     if t is None or not represent_int(t) or (idd is None and (dec is None or ra is None)):
         return "can't do that!"
 
@@ -78,12 +78,16 @@ def get_planet():
         return "Planet not found"
 
 
-@routes.route('/addPlanet')
+@routes.route('/addPlanet', methods=['GET', 'POST'])
 @is_logged_in
 def add_planet():
-    name = request.args.get('name')
-    dec = request.args.get('declination')
-    ri = request.args.get('rightAscension')
+    try:
+        name = request.args.get('name')
+        dec = request.args.get('declination')
+        ri = request.args.get('rightAscension')
+        flag = request.args.get('flag')
+    except:
+        return "wrong arguments provided"
 
     if name is None or name == "" or dec is None or dec == "" or ri is None or ri == "":
         return "Please provide all planet information!"
@@ -91,11 +95,11 @@ def add_planet():
     if Planet.query.filter_by(name=name).first():
         return "A planet with that name already exists!"
 
-    p = Planet(name, dec, ri)
+    p = Planet(name, dec, ri, flag)
     iding(p)
     db.session.add(p)
     db.session.commit()
-    return "Your Planet was created!"
+    return jsonify(p.to_dict())
 
 
 @routes.route('/planet_details')
@@ -182,8 +186,13 @@ def get_planet_details():
 def login():
     if request.method == 'POST':
         # Get Form Fields
-        username = request.form['username']
-        password_candidate = request.form['password']
+        try:
+            username = request.form['username']
+            password_candidate = request.form['password']
+        except KeyError:
+            username = request.args.get("username")
+            password_candidate = request.args.get("password")
+
         user = User.query.filter_by(username=username).first()
 
         if not user:
