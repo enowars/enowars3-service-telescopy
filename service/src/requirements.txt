@@ -4,3 +4,4 @@ paramiko
 flask-sqlalchemy
 flask-cors
 passlib
+redis
