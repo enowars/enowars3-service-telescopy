@@ -15,7 +15,6 @@ routes = Blueprint("routes", __name__)
 redis = Redis(host='redis', port=6379)
 
 
-
 # Check login state
 def is_logged_in(f):
     @wraps(f)
@@ -40,16 +39,6 @@ def index():
         planets = Planet.query.all()
         return render_template('index.html', planets=planets)
     return render_template("index.html", planets=planets)
-
-
-@routes.route('/getAll')
-@is_logged_in
-def get_all():
-    planets = Planet.query.all()
-    result = {}
-    for p in planets:
-        result.update({p.id: p.name})
-    return jsonify(result)
 
 
 @routes.route('/getPlanet')

@@ -2,18 +2,6 @@ function reply_click(clicked_id) {
     makeAjaxRequest();
 }
 
-function getAll(clicked_id) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("allPlanets").innerHTML = this.responseText;
-            // alert(this.responseText)
-        }
-    };
-    xhttp.open("GET", "../getAll", true)
-    xhttp.send();
-}
-
 function addPlanet(clicked_id) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
