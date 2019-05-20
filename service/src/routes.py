@@ -9,8 +9,11 @@ import hashlib
 from functools import wraps
 from passlib.hash import sha256_crypt
 import json
+from redis import Redis
 
 routes = Blueprint("routes", __name__)
+redis = Redis(host='redis', port=6379)
+
 
 
 # Check login state
@@ -56,7 +59,7 @@ def get_planet():
     ra = request.args.get('rightAscension')
     idd = request.args.get('id')
     t = request.args.get('ticket')
-#todo ticket expires after used
+
     if t is None or not represent_int(t) or (idd is None and (dec is None or ra is None)):
         return "can't do that!"
 
@@ -64,6 +67,11 @@ def get_planet():
     if s != 2:
         return "Invalid ticket! Try again :)"
 
+    print("REDIS ticket t: {0} and get is: {1}", t, bool(redis.get(t)), flush=True)
+    if bool(redis.get(t)):
+        return "Ticket was used already!"
+
+    redis.set(t, bytes(True))
     if idd is not None:
         ra = Planet.query.filter(Planet.planetId == idd).first()
         if ra is not None:
@@ -73,7 +81,7 @@ def get_planet():
 
     re = Planet.query.filter(Planet.declination == dec).filter(Planet.rightAscension == ra).first()
     if re is not None:
-        return jsonify(ra.to_dict())
+        return jsonify(re.to_dict())
     else:
         return "Planet not found"
 
