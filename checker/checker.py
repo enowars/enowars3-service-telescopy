@@ -46,7 +46,7 @@ class TelescopyChecker(BaseChecker):
         self.http_get("/")
         self.login(self.team_db['USERNAME'], self.team_db['PASSWORD'])
         planet = self.get_planet()
-        if planet['flag'] != self.flag:
+        if planet['flag'] == self.flag:
             print("the flag is still there :)", flush=True)
         else:
             raise BrokenServiceException("Incorrect flag {}".format(self.flag))
