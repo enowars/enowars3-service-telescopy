@@ -12,21 +12,17 @@
     <div class="row">
         <div class="col-md-6 mt-4">
             <div class="col-md-7">
-                <h5>Add an observed planet!</h5>
+                <h5>Add Planet</h5>
                 <input id="name" type="text" placeholder="Name" class="form-control">
                 <input id="declination" type="text" placeholder="Declination" class="form-control">
                 <input id="rightAscension" type="text" placeholder="Right Ascension" class="form-control">
-                <input id="flag" type="text" placeholder="Flag" disabled class="form-control">
+                <input id="flag" type="text" placeholder="Flag" class="form-control">
                 <br>
                 <button class="btn btn-secondary" id=" submit2" onClick="addPlanet(this.id)">Add Planet</button>
             </div>
             <div class="mt-3 col-md-7">
-                <h5>Detect a planet with the Telescope!</h5>
+                <h5>Get Planet </h5>
                 <input id="ticket" type="text" placeholder="Ticket" class="form-control">
-                <p> and </p>
-                <input id="declination2" type="text" placeholder="Declination" class="form-control">
-                <input id="rightAscension2" type="text" placeholder="Right Ascension" class="form-control">
-                <p> or </p>
                 <input id="planetId" type="text" placeholder="id" class="form-control">
                 <br>
                 <button class="btn btn-secondary" id=" submit1" onClick="getPlanet(this.id)">Detect</button>
@@ -34,7 +30,7 @@
             </div>
         </div>
         <div class="col-md-6 mt-4">
-            <div class="list-group">
+            <div class="list-group" style="overflow-y: scroll; height:600px;">
                 {% for planet in planets %}
                     <a href="/planet_details?name={{ planet.name }}" class="list-group-item list-group-item-action">Name: {{ planet.name }}</a>
                 {% endfor %}

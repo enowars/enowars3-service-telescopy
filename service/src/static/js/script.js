@@ -25,8 +25,7 @@ function getPlanet(clicked_id) {
             alert(this.responseText)
         }
     };
-    xhttp.open("GET", "../getPlanet?declination=" + document.getElementById("declination2").value
-        + "&rightAscension=" + document.getElementById("rightAscension2").value
+    xhttp.open("GET", "../getPlanet?declination="
         + "&ticket=" + document.getElementById("ticket").value
         + "&id=" + document.getElementById("planetId").value
         , true)

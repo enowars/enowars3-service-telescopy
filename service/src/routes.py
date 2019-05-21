@@ -44,13 +44,11 @@ def index():
 @routes.route('/getPlanet')
 @is_logged_in
 def get_planet():
-    dec = request.args.get('declination')
-    ra = request.args.get('rightAscension')
     idd = request.args.get('id')
     t = request.args.get('ticket')
 
-    if t is None or not represent_int(t) or (idd is None and (dec is None or ra is None)):
-        return "can't do that!"
+    if t is None or not represent_int(t) or idd is None:
+        return "provide a valid ticket and id!"
 
     s = check_ticket_validity(t)
     if s != 2:
@@ -68,12 +66,6 @@ def get_planet():
         else:
             return "Planet not found!"
 
-    re = Planet.query.filter(Planet.declination == dec).filter(Planet.rightAscension == ra).first()
-    if re is not None:
-        return jsonify(re.to_dict())
-    else:
-        return "Planet not found"
-
 
 @routes.route('/addPlanet', methods=['GET', 'POST'])
 @is_logged_in
@@ -88,6 +80,9 @@ def add_planet():
 
     if name is None or name == "" or dec is None or dec == "" or ri is None or ri == "":
         return "Please provide all planet information!"
+
+    if len(name) >15 or len(ri) > 15 or len(dec) > 15 or len(flag) > 200:
+        return "value too long!"
 
     if Planet.query.filter_by(name=name).first():
         return "A planet with that name already exists!"
