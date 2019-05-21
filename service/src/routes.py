@@ -78,10 +78,10 @@ def add_planet():
     except:
         return "wrong arguments provided"
 
-    if name is None or name == "" or dec is None or dec == "" or ri is None or ri == "":
+    if name is None or name == "" or dec is None or dec == "" or ri is None or ri == "" or flag is None or flag == "":
         return "Please provide all planet information!"
 
-    if len(name) >15 or len(ri) > 15 or len(dec) > 15 or len(flag) > 200:
+    if len(name) > 30 or len(ri) > 15 or len(dec) > 15 or len(flag) > 200:
         return "value too long!"
 
     if Planet.query.filter_by(name=name).first():
@@ -253,7 +253,7 @@ def iding(i):
     e = i.name.encode('utf-8')
     d = i.declination.encode('utf-8')
     r = i.rightAscension.encode('utf-8')
-    h = hashlib.md5(e + d + r)
+    h = hashlib.sha256(e + d + r)
     i.planetId = h.hexdigest()
 
 

@@ -3,7 +3,7 @@ function reply_click(clicked_id) {
 }
 
 function addPlanet(clicked_id) {
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             alert(this.responseText)
@@ -13,13 +13,13 @@ function addPlanet(clicked_id) {
         "?name=" + document.getElementById("name").value +
         "&declination=" + document.getElementById("declination").value +
         "&rightAscension=" + document.getElementById("rightAscension").value +
-        "&flag=none"
-        , true)
+        "&flag=" + document.getElementById("flag").value
+        , true);
     xhttp.send();
 }
 
 function getPlanet(clicked_id) {
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             alert(this.responseText)
@@ -28,12 +28,12 @@ function getPlanet(clicked_id) {
     xhttp.open("GET", "../getPlanet?declination="
         + "&ticket=" + document.getElementById("ticket").value
         + "&id=" + document.getElementById("planetId").value
-        , true)
+        , true);
     xhttp.send();
 }
 
 function makeAjaxRequest() {
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("result").innerHTML = this.responseText;
