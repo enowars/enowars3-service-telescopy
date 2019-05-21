@@ -39,7 +39,24 @@ class TelescopyChecker(BaseChecker):
         pass
 
     def havoc(self):
-        pass
+        un = fake.name()
+        pw = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
+        self.register(un, pw)
+        self.login(un, pw)
+
+        name = fake.name()
+        declination = str(round(random.uniform(0.6, 155.5), 3))
+        rightAscension = str(round(random.uniform(0.6, 155.5), 3))
+        flag = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(30))
+        data = {'name': name,
+                'declination': declination,
+                'rightAscension': rightAscension,
+                'flag': flag}
+        self.add_planet2(data)
+        self.check_planet_list(name)
+        self.check_planet_details(name, declination, rightAscension)
+
+
 
     def register(self, username, password):
         print("Start registration  U: " + username + "  P: " + password, flush=True)
@@ -67,9 +84,17 @@ class TelescopyChecker(BaseChecker):
 
     def add_planet(self):
         data = {'name': fake.name(),
-                'declination': '10.1',
-                'rightAscension': '10.2',
+                'declination': str(round(random.uniform(0.6, 155.5), 2)),
+                'rightAscension': str(round(random.uniform(0.6, 155.5), 2)),
                 'flag': self.flag}
+        resp = self.http_post('/addPlanet', data)
+        resp_dict = json.loads(resp.text)
+
+        print("planet added with id: " + resp_dict['planetId'], flush=True)
+
+        self.team_db[self.flag] = resp_dict['planetId']
+
+    def add_planet2(self, data):
         resp = self.http_post('/addPlanet', data)
         resp_dict = json.loads(resp.text)
 
@@ -96,6 +121,24 @@ class TelescopyChecker(BaseChecker):
 
         print("planet retrieved with id: " + resp_dict['planetId'], flush=True)
         return resp_dict
+
+    def check_planet_list(self, name):
+        resp = self.http_get("/")
+        print("checking planets list \n " + resp.text, flush=True)
+        if name not in resp.text:
+            raise BrokenServiceException("planet list not showing")
+        else:
+            print("planet name is displayed : " + name + "\n", flush=True)
+
+    def check_planet_details(self, name,  declination, rightAscension):
+        resp = self.http_get("/planet_details?name=" + name)
+        print("checking planets details \n " + resp.text, flush=True)
+
+        if declination not in resp.text or rightAscension not in resp.text:
+            raise BrokenServiceException("planet details not working")
+        else:
+            print("planet details displayed \n  declination: " + declination + " rightAscension" + rightAscension,
+                  flush=True)
 
 
 app = TelescopyChecker.service
