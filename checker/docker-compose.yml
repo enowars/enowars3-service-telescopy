@@ -12,6 +12,8 @@ services:
       - 5001:80
   telescopy-service:
     build: ../service/src
+    volumes:
+      - ../service/src:/app
     ports:
       - "8000:80"
     depends_on:
