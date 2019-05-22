@@ -3,10 +3,8 @@ version: '3'
 services:
   telescopy-service:
     build: ./src
-    volumes: 
-      - ./src:/usr/src/app
-    ports: 
-      - "8000:8000"
+    ports:
+      - "8000:80"
     depends_on:
       - redis
   redis:
