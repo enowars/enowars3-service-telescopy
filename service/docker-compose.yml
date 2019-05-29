@@ -1,33 +1,15 @@
-version: '2.3'
+version: '3'
 
 services:
   telescopy-service:
     build: ./src
     volumes:
-      - ./src:/app
+      - ./src:/usr/src/app
     ports:
-      - "8000:80"
+      - "8000:8000"
     depends_on:
       - redis
-    networks:
-     telescopy_intern:
-     telescopy_network:
-       ipv6_address: fd00:1337:0:abed::1
-    restart: unless-stopped 
   redis:
     image: redis
     ports:
       - "6379:6379"
-    networks:
-     telescopy_intern:
-
-
-networks:
- telescopy_intern:
- telescopy_network:
-   enable_ipv6: true
-   ipam:
-     driver: default
-     config:
-       - subnet: fd00:1337:0:abed::/64
-         gateway: fd00:1337:0:abed::ffff

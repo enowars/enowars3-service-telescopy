@@ -13,7 +13,7 @@ PRIMES_COUNT = 19800
 
 
 class TelescopyChecker(BaseChecker):
-    port = 8000  # default port to send requests to.
+    port = 80  # default port to send requests to.
     USERNAME = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
     PASSWORD = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
     PLANET_NAME = fake.name()

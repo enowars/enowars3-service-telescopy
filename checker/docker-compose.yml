@@ -3,7 +3,7 @@ services:
   telescopy-backend:
     build: .
     networks:
-      telescopy-checker-network:
+      checkernet:
         ipv6_address: fd00:1337:0:cecc:8::2
   telescopy-frontend:
     image: nginx:1.13-alpine
@@ -12,10 +12,10 @@ services:
     depends_on:
       - telescopy-backend
     networks:
-      telescopy-checker-network:
+      checkernet:
         ipv6_address: fd00:1337:0:cecc:8::1
 
 networks:
-  telescopy-checker-network:
+  checkernet:
     external: true
 
