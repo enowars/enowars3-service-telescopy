@@ -10,6 +10,3 @@ app.config['SECRET_KEY'] = 'e5ac358c-f0bf-11e5-9e39-d3b532c10a28'
 app.permanent_session_lifetime = timedelta(minutes=60)
 db = SQLAlchemy(app)
 CORS(app)
-
-
-# comment 

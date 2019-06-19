@@ -11,8 +11,6 @@ services:
         ipv6_address: 2001:db7:3200::20
     volumes:
       - ./src:/usr/src/app
-    ports:
-      - "8000:80"
     depends_on:
       - redis
   redis:
