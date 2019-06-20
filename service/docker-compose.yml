@@ -10,7 +10,7 @@ services:
       app_net:
         ipv6_address: 2001:db7:3200::20
     volumes:
-      - ./src:/usr/src/app
+      - ./src:/app
     depends_on:
       - redis
   redis:

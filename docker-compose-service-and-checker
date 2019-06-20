@@ -24,7 +24,7 @@ services:
       app_net:
         ipv6_address: 2001:db6:3200::20
     volumes:
-      - ./service/src:/usr/src/app
+      - ./service/src:/app
     ports:
       - "8000:80"
     depends_on:
