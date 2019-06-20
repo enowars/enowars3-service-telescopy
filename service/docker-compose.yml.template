@@ -12,7 +12,7 @@ services:
     networks:
      default:
      telescopy_network:
-       ipv6_address: fd00:1337:0:abed::1
+       ipv6_address: fd00:1337:TEAMID:abed::1
     restart: unless-stopped
   redis:
     image: redis
