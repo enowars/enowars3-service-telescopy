@@ -14,6 +14,6 @@ COPY ./uwsgi.ini uwsgi.ini
 COPY ./checker.py checker.py
 
 ENTRYPOINT [ "uwsgi", "--uid", "uwsgi", \
-               "--socket", "[::]:3031", \
+               "--socket", "0.0.0.0:3031", \
                "--protocol", "uwsgi", \
                "--ini", "./uwsgi.ini" ]
