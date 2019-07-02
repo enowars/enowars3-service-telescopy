@@ -18,7 +18,7 @@ services:
       - traefik.enable=true
       - traefik.backend=telescopy-checker
       - traefik.docker.network=enoverlay
-      - traefik.frontend.rule=Host:telescopy.checker.enowars.com,service19.checker.enowars.com,,abed.checker.enowars.com
+      - traefik.frontend.rule=Host:telescopy.checker.enowars.com,service19.checker.enowars.com,abed.checker.enowars.com
       - traefik.port=3031
       replicas: 1
       
