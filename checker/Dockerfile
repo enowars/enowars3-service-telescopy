@@ -15,4 +15,4 @@ COPY ./uwsgi.ini uwsgi.ini
 # here you might need to add more stuff
 COPY ./checker.py checker.py
 
-ENTRYPOINT ["uwsgi", "--socket", "[::]:3031", "--protocol", "http", "--ini", "./uwsgi.ini"]
+ENTRYPOINT ["uwsgi", "--socket", "[::]:3031", "--protocol", "http","--http-keepalive", "--ini", "./uwsgi.ini"]
