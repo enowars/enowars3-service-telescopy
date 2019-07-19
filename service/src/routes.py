@@ -31,10 +31,6 @@ def is_logged_in(f):
 @is_logged_in
 def index():
     planets = Planet.query.all()
-    # planets = [p.to_dict() for p in planets]
-    # planets = json.dumps(planets)
-    # session['planets'] = planets
-
     if request.method == 'POST':
         planets = Planet.query.all()
         return render_template('index.html', planets=planets)
@@ -101,9 +97,6 @@ def get_planet_details():
     planeta = None
     if name:
         planets = Planet.query.all()
-        # Session vulnerability here.
-        # TODO check if too difficult o too easy.
-        # session['planets'] = planets
         for p in planets:
             if p.name in name:
                 planeta = p.to_dict()
